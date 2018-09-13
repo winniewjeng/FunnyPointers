@@ -6,92 +6,41 @@
 using namespace std;
 typedef int T;
 
-T* remove_entry(T* list, const T&, int&, int&);
-T* add_entry(T*, const T&, int&, int&); //NOT YET IMPLEMENTED
-void shift_left(T*, int&, T*);
+T* initialize(int& size, int& capacity);
 T* delete_repeats(T*, int&, int&);
+T* find(T*, int, const T&);
 T* allocate(int);
-T* copy_list(T*, T*, int); //How can it be a void function????
-T* find(T*, int, int);
+void copy_list(T*, T*, int);
+void shift_left(T*, int&, T*);
+void print_list(T* list, int size);
+
+//9.2 delete repeats
 
 int main() {
 
     int size = 10000;
     int capacity = 20000;
 
-    T* a = new T[size];
+    T* a = initialize(size, capacity);
 
-    for (int i = 0; i < size; i++) {
-        *(a + i) = rand() % 10;
-    }
+    delete_repeats(a, size, capacity);
 
-    //    T* b = delete_repeats(a, size, capacity);
-    T* c = remove_entry(a, 3, size, capacity);
-    c = add_entry(a, 3, size, capacity);
-
-    T* walker = c;
-    while (walker != c + size) {
-        cout << *walker << " ";
-        walker++;
-    }
-    cout << endl;
-    cout << "capacity " << capacity << endl;
-    cout << "size " << size << endl;
+    print_list(a, size);
 
     return 0;
 }
 
-T* add_entry(T* list, const T& new_entry, int& size, int& capacity) {
+T* initialize(int& size, int& capacity) {
 
-    //resize if the list capacity is full
-    if (size + 1 > capacity) {
-        capacity *= 2;
-        T* destination = allocate(capacity);
-        list = copy_list(destination, list, size);
-    }
-    //add new_entry at the end of the list, where the size is.
-    T* placer = list + size;
-    *placer = new_entry;
-    //increment the size by 1
-    size++;
-
-    return list;
-}
-
-T* remove_entry(T* list, const T& delete_me, int& size, int& capacity) {
-
-    //resize the list capacity if needed
-    if (size - 1 <= capacity / 4) {
-        capacity /= 2;
-        T* destination = allocate(capacity);
-        list = copy_list(destination, list, size);
-    }
-    //take out delete_me. Traverse through list. If delete_me is found, mark its walker location
+    T* list = new T[size];
     T* walker = list;
-    T* shifter;
+
     while (walker != list + size) {
-        if (*walker == delete_me) {
-            shifter = walker;
-            //shift everything to left
-            shift_left(list, size, shifter);
-        }
+        *walker = rand() % 10;
         walker++;
     }
+
     return list;
-}
-
-void shift_left(T* list, int& size, T* shifter) {
-    //don't grab the garbage value, hence (size-1)
-    while (shifter < list + (size - 1)) {
-        *shifter = *(shifter + 1);
-        shifter++;
-    }
-    //decrement the list size every time a duplicate is replaced
-    size--;
-}
-
-T* allocate(int capacity) {
-    return new T[capacity];
 }
 
 T* delete_repeats(T* list, int& size, int& capacity) {
@@ -114,24 +63,13 @@ T* delete_repeats(T* list, int& size, int& capacity) {
         //call the allocate() function to allocate a memory with less space
         T* destination = allocate(capacity);
         //call the copy_list() function to copy items in list to the memory with less space
-        list = copy_list(destination, list, size);
+        copy_list(destination, list, size);
     }
 
     return list;
 }
 
-T* copy_list(T *dest, T* src, int many_to_copy) {
-
-    for (int i = 0; i < many_to_copy; i++) {
-        *(dest + i) = *(src + i);
-    }
-    //release unused memory
-    delete[] src;
-
-    return dest;
-}
-
-T* find(T* a, int size, int key) {
+T* find(T* a, int size, const T& key) {
 
     T* walker = a;
 
@@ -142,4 +80,37 @@ T* find(T* a, int size, int key) {
         walker++;
     }
     return nullptr;
+}
+
+T* allocate(int capacity) {
+    return new T[capacity];
+}
+
+void copy_list(T *dest, T* src, int many_to_copy) {
+
+    for (int i = 0; i < many_to_copy; i++) {
+        *(dest + i) = *(src + i);
+    }
+
+    src = dest;
+}
+
+void shift_left(T* list, int& size, T* shifter) {
+    //don't grab the garbage value, hence (size-1)
+    while (shifter < list + (size - 1)) {
+        *shifter = *(shifter + 1);
+        shifter++;
+    }
+    //decrement the list size every time a duplicate is replaced
+    size--;
+}
+
+void print_list(T* list, int size) {
+
+    T* walker = list;
+    while (walker != list + size) {
+        cout << *walker << " ";
+        walker++;
+    }
+    cout << endl;
 }
