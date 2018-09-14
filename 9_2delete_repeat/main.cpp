@@ -7,11 +7,11 @@ using namespace std;
 typedef int T;
 
 T* initialize(int& size, int& capacity);
-T* delete_repeats(T*, int&, int&);
-T* find(T*, int, const T&);
-T* allocate(int);
-void copy_list(T*, T*, int);
-void shift_left(T*, int&, T*);
+T* delete_repeats(T* list, int& size, int& capacity);
+T* find(T* a, int size, const T& key);
+T* allocate(int capacity);
+void copy_list(T *dest, T* src, int many_to_copy);
+void shift_left(T* list, int& size, T* shifter);
 void print_list(T* list, int size);
 
 //9.2 delete repeats
